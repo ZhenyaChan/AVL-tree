@@ -11,5 +11,5 @@ int main (void) {
     tree.insert(1);
     tree.insert(3);
     tree.printInOrder();
-    tree.printBreadthFirst();
+    tree.print();
 }
