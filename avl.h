@@ -85,6 +85,7 @@ class AVL {
         }
     }
 
+    // function performs left rotation towards passed Node A (A is parent, B is right child)
     void leftRotate(Node*& A) {
         Node* B = A->right_;
         Node* y = B->left_;
@@ -93,6 +94,7 @@ class AVL {
         A = B;
     }
 
+    // function performs right rotation towards passed Node A (A is parent, B is left child)
     void rightRotate(Node*& A) {
         Node* B = A->left_;
         Node* y = B->right_;
@@ -100,6 +102,39 @@ class AVL {
         A->left_ = y;
         A = B;
     }
+
+    // function used by printPreOrder()to print the nodes in the subtree with passed "subtree" Node as root node using "pre-order" traversal
+    void printPreOrder(Node* subtree) const{
+        if (subtree) {
+            std::cout << subtree->data_ << " ";
+            printPreOrder(subtree->left_);
+            printPreOrder(subtree->right_);
+        }
+    }
+
+    // function used by printInOrder()to print the nodes in the subtree with passed "subtree" Node as root node using "in-order" traversal
+    void printInOrder(Node* subtree) const{
+        if (subtree) {
+            printInOrder(subtree->left_);
+            std::cout << subtree->data_ << " ";
+            printInOrder(subtree->right_);
+        }
+    }
+
+    // function used by destructor ~AVL() to delete the nodes in the tree with passed root Node using "post-order" traversal    
+    void destroy(Node* subtree) {
+        if (subtree) {
+            destroy(subtree->left_);
+            destroy(subtree->right_);
+            delete subtree;
+        }
+    }
+
+    // function used by print() to print all nodes at same level
+    void printLine(Node* subtree) const{
+
+    }
+
 public:
     // constructor to initialize avl-tree
     AVL() {
@@ -111,11 +146,22 @@ public:
         insert(root_, data);
     }
 
-    void printInOrder() {
-
+    void printPreOrder() {
+        printPreOrder(root_);
+        std::cout << std::endl;
     }
 
-    void printBreadthFirst() {
+    void printInOrder() {
+        printInOrder(root_);
+        std::cout << std::endl;
+    }
 
+    // function prints how the tree looks like
+    void print() {
+        
+    }
+
+    ~AVL() {
+        destroy(root_);
     }
 };
