@@ -130,6 +130,30 @@ class AVL {
         }
     }
 
+    // function recursively checks if the passed two subtree root nodes and their subtrees are the same or not
+    // returns true if they are the same, false otherwise
+    bool isSame(const Node* left, const Node* right) const{
+		bool rc;
+
+		if (left == nullptr && right == nullptr) {
+			rc = true;
+		}
+		else if (left && right) {
+			if (left->data_ != right->data_) {
+				rc = false;
+			}
+			else {
+				rc = (isSame(left->left_, right->left_) && isSame(left->right_, right->right_));
+			}
+		}
+		else {
+			// one is nullptr and one is not
+			rc = false;
+		}
+
+		return rc;
+	}
+
     // function used by print() to print all nodes at same level
     void printLine(Node* subtree) const{
 
@@ -146,11 +170,13 @@ public:
         insert(root_, data);
     }
 
+    // functions calls private printPreOrder() function to print all nodes in the AVL tree using pre-order traversal
     void printPreOrder() {
         printPreOrder(root_);
         std::cout << std::endl;
     }
 
+    // functions calls private printInOrder() function to print all nodes in the AVL tree using in-order traversal
     void printInOrder() {
         printInOrder(root_);
         std::cout << std::endl;
@@ -158,9 +184,15 @@ public:
 
     // function prints how the tree looks like
     void print() {
-        
+        printLine(root_);
     }
 
+    // function compares two trees if they are the same or not by calling private isSame() function
+    bool operator==(const AVL& rhs) const{
+		return isSame(root_, rhs.root_);
+	}
+
+    // functions calls private destroy() function to delete all nodes in the AVL tree using post-order traversal
     ~AVL() {
         destroy(root_);
     }
