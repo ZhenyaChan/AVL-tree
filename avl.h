@@ -263,6 +263,25 @@ class AVL {
 		return -1;
 	}
 
+    // function searches for the node containing the passed data recursively
+    // returns true if such a node exists, otherwise returns false
+    bool search(const T& data, const Node* subtree) const{
+        bool rc=false;
+        //if it tree is empty, the if is skipped and we return false
+        if(subtree != nullptr){
+            if(data == subtree->data_){
+                rc = true;
+            }
+            else if(data < subtree->data_){
+                rc = search(data,subtree->left_);
+            }
+            else{
+                rc = search(data,subtree->right_);
+            }
+        }
+        return rc;    
+    }
+
 public:
     // constructor to initialize avl-tree
     AVL() {
@@ -274,17 +293,17 @@ public:
 		root_ = deepCopy(root_, rhs.root_);
 	}
 
-    // function returns the depth level of the node containing passed data
+    // function calls private recursive getDepth() function to returns the depth level of the node containing passed data
     int depth(const T& data){
 		return getDepth(root_, data, 0);
 	}
 
-    // call private recursive insertion function to insert data into the AVL tree
+    // functions calls private recursive insertion function to insert data into the AVL tree
     void insert(const T& data) {
         insert(root_, data);
     }
 
-    // function searches for the node containing the passed data
+    // function calls private recursive search() function to search for the node containing the passed data
     // returns true if such a node exists, otherwise returns false
     bool search(const T& data) const{
         //call and return result from recursive search() function
