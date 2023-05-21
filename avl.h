@@ -105,7 +105,7 @@ class AVL {
 
     // function used by printPreOrder()to print the nodes in the subtree with passed "subtree" Node as root node using "pre-order" traversal
     void printPreOrder(Node* subtree) const{
-        if (subtree) {
+        if (subtree!= nullptr) {
             std::cout << subtree->data_ << " ";
             printPreOrder(subtree->left_);
             printPreOrder(subtree->right_);
@@ -114,7 +114,7 @@ class AVL {
 
     // function used by printInOrder()to print the nodes in the subtree with passed "subtree" Node as root node using "in-order" traversal
     void printInOrder(Node* subtree) const{
-        if (subtree) {
+        if (subtree != nullptr) {
             printInOrder(subtree->left_);
             std::cout << subtree->data_ << " ";
             printInOrder(subtree->right_);
@@ -123,7 +123,7 @@ class AVL {
 
     // function used by destructor ~AVL() to delete the nodes in the tree with passed root Node using "post-order" traversal    
     void destroy(Node* subtree) {
-        if (subtree) {
+        if (subtree != nullptr) {
             destroy(subtree->left_);
             destroy(subtree->right_);
             delete subtree;
@@ -269,10 +269,12 @@ public:
         root_ = nullptr;
     }
 
+    // copy constructor
     AVL(const AVL& rhs){
 		root_ = deepCopy(root_, rhs.root_);
 	}
 
+    // function returns the depth level of the node containing passed data
     int depth(const T& data){
 		return getDepth(root_, data, 0);
 	}
@@ -280,6 +282,13 @@ public:
     // call private recursive insertion function to insert data into the AVL tree
     void insert(const T& data) {
         insert(root_, data);
+    }
+
+    // function searches for the node containing the passed data
+    // returns true if such a node exists, otherwise returns false
+    bool search(const T& data) const{
+        //call and return result from recursive search() function
+        return search(data,root_);
     }
 
     // functions calls private printPreOrder() function to print all nodes in the AVL tree using pre-order traversal
