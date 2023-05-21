@@ -60,7 +60,7 @@ public:
     }
 
     // function returns false if the queue is empty, otherwise returns true
-    bool isEmpty() {
+    bool isEmpty() const{
         return used_ == 0;
     }
 
