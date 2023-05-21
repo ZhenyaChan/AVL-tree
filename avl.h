@@ -29,7 +29,7 @@ class AVL {
         void updateHeight() {
             int heightRight = (right_) ? right_->height_ : 0;
             int heightLeft = (left_) ? left_->height_ : 0;
-            height_ = 1 + (heightRight > heightLeft) ? heightRight : heightLeft;
+            height_ = 1 + ((heightRight > heightLeft)? heightRight : heightLeft);
         }
     };
     // pointer to the root of the avl-tree
@@ -37,7 +37,7 @@ class AVL {
 
     // function inserts data into the subtree with root "subtree"
     void insert(Node*& subtree, const T& data) {
-        if (!subtree) {
+        if (subtree == nullptr) {
             subtree = new Node(data);
         }
         else {
@@ -54,8 +54,8 @@ class AVL {
                     // double rotation
                     rightRotate(subtree->right_);
                     leftRotate(subtree);
-                    subtree->right_->updateHeight();
                     subtree->left_->updateHeight();
+                    subtree->right_->updateHeight();
                     subtree->updateHeight();
                 }
                 else {
@@ -188,11 +188,11 @@ class AVL {
         for(int i=0;i<numNodes;i++){
 			if(data[i]){
 				if(i%2==0){
-					std::cout << std::right << std::setw(firsthalf) << "|";
+					std::cout << std::right << std::setw(firstHalf) << "|";
 					std::cout << std::left <<std::setfill(' ') << std::setw(half)<<" ";
 				}
 				else{
-					std::cout << std::right << std::setfill(' ') << std::setw(firsthalf) << " ";
+					std::cout << std::right << std::setfill(' ') << std::setw(firstHalf) << " ";
 					std::cout << std::left <<std::setfill(' ') << std::setw(half)<< "|";				
 				}
 			}
@@ -205,11 +205,11 @@ class AVL {
         for(int i=0;i<numNodes;i++){
 			if(data[i]){
 				if(i%2==0){
-					std::cout << std::right << std::setw(firsthalf) << data[i]->data_;
+					std::cout << std::right << std::setw(firstHalf) << data[i]->data_;
 					std::cout << std::left <<std::setfill(' ') << std::setw(half)<<" ";
 				}
 				else{
-					std::cout << std::right << std::setfill(' ') << std::setw(firsthalf) << " ";
+					std::cout << std::right << std::setfill(' ') << std::setw(firstHalf) << " ";
 					std::cout << std::left <<std::setfill(' ') << std::setw(half)<< data[i]->data_;				
 				}
 			}
@@ -220,11 +220,62 @@ class AVL {
 		std::cout << std::endl;
     }
 
+    // function makes a deep copy (copies passed copyRoot to currentRoot)
+    Node* deepCopy(Node*& currentRoot, const Node* copyRoot) {
+		if (copyRoot) {
+			// copy data from the root
+			currentRoot = new Node(copyRoot->data_);
+			// copy left subtree
+			deepCopy(currentRoot->left_, copyRoot->left_);
+			// copy right subtree
+			deepCopy(currentRoot->right_, copyRoot->right_);
+			// return current root
+			return currentRoot;
+		}
+		// if copy subtree does not exist, return nullptr
+		return nullptr;
+	}
+
+    // function returns the depth level of the Node containing passed data value within given subtree
+	int getDepth(Node* subtree, const T& data, int level) {
+		if (subtree) {
+			// if node found, return the depth level
+			if (subtree->data_ == data) {
+				return level;
+			}
+
+			// search for the node in the left subtree, passing the depth level + 1
+			int downLevel = getDepth(subtree->left_, data, level + 1);
+			// if found, return depth
+			if (downLevel > 0) {
+				return downLevel;
+			}
+
+			// search for the node in the right subtree, passing the depth level + 1
+			downLevel = getDepth(subtree->right_, data, level + 1);
+			// if found, return depth
+			if (downLevel > 0) {
+				return downLevel;
+			}
+		}
+
+		// return -1 if no such node exist
+		return -1;
+	}
+
 public:
     // constructor to initialize avl-tree
     AVL() {
         root_ = nullptr;
     }
+
+    AVL(const AVL& rhs){
+		root_ = deepCopy(root_, rhs.root_);
+	}
+
+    int depth(const T& data){
+		return getDepth(root_, data, 0);
+	}
 
     // call private recursive insertion function to insert data into the AVL tree
     void insert(const T& data) {
