@@ -155,8 +155,69 @@ class AVL {
 	}
 
     // function used by print() to print all nodes at same level
-    void printLine(Node* subtree) const{
+    void printLine(Node* data[], int numNodes, int width) const {
+        int half = width / 2;
+        int firstHalf = width % 2? half + 1 : half;
 
+        if (numNodes > 1) {
+            for (int i = 0; i < numNodes; i++) {
+                if (i % 2 == 0) {
+                    if (data[i]) {
+                        std::cout << std::right <<std::setfill(' ') << std::setw(firstHalf)<< "-";
+						std::cout << std::left << std::setfill('-') << std::setw(half) << "-";
+                    }
+                    else {
+                        std::cout << std::right <<std::setfill(' ') << std::setw(firstHalf)<< " ";
+						std::cout << std::left << std::setfill(' ') << std::setw(half) << " ";
+                    }
+                }
+                else {
+                    if(data[i]){
+						std::cout << std::right << std::setfill('-') << std::setw(firstHalf) << "-";
+						std::cout << std::left <<std::setfill(' ') << std::setw(half)<<"-";
+					}
+					else{
+						std::cout << std::right << std::setfill(' ') << std::setw(firstHalf) << " ";
+						std::cout << std::left <<std::setfill(' ') << std::setw(half)<<" ";
+					}
+                }
+            }
+            std::cout << std::endl;
+        }
+
+        for(int i=0;i<numNodes;i++){
+			if(data[i]){
+				if(i%2==0){
+					std::cout << std::right << std::setw(firsthalf) << "|";
+					std::cout << std::left <<std::setfill(' ') << std::setw(half)<<" ";
+				}
+				else{
+					std::cout << std::right << std::setfill(' ') << std::setw(firsthalf) << " ";
+					std::cout << std::left <<std::setfill(' ') << std::setw(half)<< "|";				
+				}
+			}
+			else{
+				std::cout << std::left <<std::setfill(' ') << std::setw(width)<<" ";			
+			}
+		}
+		std::cout << std::endl;
+
+        for(int i=0;i<numNodes;i++){
+			if(data[i]){
+				if(i%2==0){
+					std::cout << std::right << std::setw(firsthalf) << data[i]->data_;
+					std::cout << std::left <<std::setfill(' ') << std::setw(half)<<" ";
+				}
+				else{
+					std::cout << std::right << std::setfill(' ') << std::setw(firsthalf) << " ";
+					std::cout << std::left <<std::setfill(' ') << std::setw(half)<< data[i]->data_;				
+				}
+			}
+			else{
+				std::cout << std::left <<std::setfill(' ') << std::setw(width)<<" ";			
+			}
+		}
+		std::cout << std::endl;
     }
 
 public:
@@ -184,7 +245,60 @@ public:
 
     // function prints how the tree looks like
     void print() {
-        printLine(root_);
+        struct Output{
+			Node* node_;
+			int lvl_;
+			int position_;
+			Output(Node* n = nullptr, int l = 0, int p = 0) {
+                node_ = n;
+                lvl_ = l;
+                position_ = p;
+            }
+			void set(Node* n = nullptr, int l = 0, int p = 0) {
+                node_ = n;
+                lvl_ = l;
+                position_ = p;
+            }
+		};
+
+        Queue<Output> theNodes;
+        Node* line[16];
+
+        if (root_){
+            for (int i = 0; i < 16; i++) {
+                line[i] = nullptr;
+            }
+
+            theNodes.enqueue(Output(root_, 0, 0));
+            int currLine = 0;
+            int width = 80;
+            int numInLine = 1;
+            while (theNodes.isEmpty() == false) {
+                Output curr = theNodes.front();
+                if (curr.node_->left_) {
+                    theNodes.enqueue(Output(curr.node_->left_, curr.lvl_ + 1, curr.position_ * 2));
+                }
+                if (curr.node_->right_) {
+                    theNodes.enqueue(Output(curr.node_->right_, curr.lvl_ + 1, curr.position_ * 2 + 1));
+                }
+                theNodes.dequeue();
+
+                if (curr.lvl_ > currLine) {
+                    printLine(line, numInLine, width);
+                    width = width / 2;
+                    numInLine = numInLine * 2;
+                    for (int i = 0; i < 16; i++) {
+                        line[i] = nullptr;
+                    }
+                    currLine++;
+                }
+                line[curr.position_] = curr.node_;
+            }
+            printLine(line, numInLine, width);
+            std::cout << std::endl;
+        } else {
+            std::cout << "The AVL tree is empty." << std::endl;
+        }
     }
 
     // function compares two trees if they are the same or not by calling private isSame() function
