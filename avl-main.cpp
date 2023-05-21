@@ -15,7 +15,10 @@ int main (void) {
     tree.insert(23);
     tree.insert(21);
     tree.insert(1);
-    tree.insert(3);
+    tree.insert(9);
+    tree.insert(30);
+    tree.insert(40);
+    tree.insert(50);
     tree.printInOrder();
     tree.print();
 }
